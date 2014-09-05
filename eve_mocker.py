@@ -172,7 +172,7 @@ class EveMocker(object):
             support all methods, except HEAD. """
         headers["content_type"] = "application/json"
         path = filter(lambda x: x not in ["api", ""], request.path.split('/'))
-        resource = path[0]
+        resource = path[0].split('?')[0]
         if request.method == "GET":
             _items = self.get_resource(resource)
 
