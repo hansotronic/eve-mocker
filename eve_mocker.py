@@ -214,7 +214,7 @@ class EveMocker(object):
                     item["etag"] = item_etag
                     self.items[resource][pk] = item
                     out[key] = {"status": "OK", "etag": item_etag}
-            return [200, headers, json.dumps(out)]
+            return [201, headers, json.dumps(out)]
 
         elif request.method == "DELETE":
             del self.items[resource]
@@ -261,6 +261,6 @@ class EveMocker(object):
                 patch_data.update({"etag": new_etag})
                 self.items[resource][item_id].update(patch_data)
                 out[k] = {"status": "OK", "etag": new_etag}
-            return [200, headers, json.dumps(out)]
+            return [201, headers, json.dumps(out)]
 
         return [405, headers, "{}"]
