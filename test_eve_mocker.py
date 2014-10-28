@@ -42,18 +42,18 @@ class TestEveMocker(unittest.TestCase):
         data = response.json()
 
         # Check the status of the item and if it has an etag
-        expect(response.status_code).to.equal(200)
+        expect(response.status_code).to.equal(201)
         expect(data).to.have.key("mymodel1")
         expect(data["mymodel1"]["status"]).to.equal("OK")
-        expect(data["mymodel1"]).to.have.key("etag")
+        expect(data["mymodel1"]).to.have.key("_etag")
 
         # Storing the ETag for later
-        mymodel1_etag = data["mymodel1"]["etag"]
+        mymodel1_etag = data["mymodel1"]["_etag"]
 
         # Check that it has actually been created
         response = requests.get(mymodel_url)
         mymodel1_test = mymodel1.copy()
-        mymodel1_test.update({"etag": data["mymodel1"]["etag"]})
+        mymodel1_test.update({"_etag": data["mymodel1"]["_etag"]})
 
         expect(response.status_code).to.equal(200)
         expect(response.json()).to.equal({"_items": [mymodel1_test]})
@@ -71,7 +71,7 @@ class TestEveMocker(unittest.TestCase):
                                  {"mymodel1": json.dumps(mymodel1)})
         data = response.json()
 
-        expect(response.status_code).to.equal(200)
+        expect(response.status_code).to.equal(201)
         expect(data).to.have.key("mymodel1")
         expect(data["mymodel1"]["status"]).to.equal("ERR")
 
@@ -95,13 +95,13 @@ class TestEveMocker(unittest.TestCase):
                                   headers={"If-Match": mymodel1_etag})
         data = response.json()
 
-        expect(response.status_code).to.equal(200)
+        expect(response.status_code).to.equal(201)
         expect(data).to.have.key("data")
         expect(data["data"]["status"]).to.equal("OK")
-        expect(data["data"]).to.have.key("etag")
+        expect(data["data"]).to.have.key("_etag")
 
-        mymodel1_etag = data["data"]["etag"]
-        mymodel1_test.update({"etag": mymodel1_etag,
+        mymodel1_etag = data["data"]["_etag"]
+        mymodel1_test.update({"_etag": mymodel1_etag,
                               "content": "new content"})
 
         # Check if the item has been updated
