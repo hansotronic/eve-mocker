@@ -211,9 +211,9 @@ class EveMocker(object):
                     out[key] = {"status": "ERR", "issues": ["pk not unique"]}
                 else:
                     item_etag = generate_etag()
-                    item["etag"] = item_etag
+                    item["_etag"] = item_etag
                     self.items[resource][pk] = item
-                    out[key] = {"status": "OK", "etag": item_etag}
+                    out[key] = {"status": "OK", "_etag": item_etag}
             return [201, headers, json.dumps(out)]
 
         elif request.method == "DELETE":
@@ -236,7 +236,7 @@ class EveMocker(object):
             if not "If-Match" in request.headers:
                 return [403, headers, "{}"]
 
-            old_etag = self.items[resource][item_id]["etag"]
+            old_etag = self.items[resource][item_id]["_etag"]
 
             if request.headers["If-Match"] != old_etag:
                 return [412, headers, "{}"]
@@ -258,9 +258,9 @@ class EveMocker(object):
             for k, patch_data in qs.items():
                 patch_data = json.loads(patch_data[0])
                 new_etag = generate_etag()
-                patch_data.update({"etag": new_etag})
+                patch_data.update({"_etag": new_etag})
                 self.items[resource][item_id].update(patch_data)
-                out[k] = {"status": "OK", "etag": new_etag}
+                out[k] = {"status": "OK", "_etag": new_etag}
             return [201, headers, json.dumps(out)]
 
         return [405, headers, "{}"]
